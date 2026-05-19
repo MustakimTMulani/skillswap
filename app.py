@@ -1,3 +1,5 @@
+import os
+
 from flask import (
     Flask,
     render_template,
@@ -31,9 +33,13 @@ app.config['MAIL_PORT'] = 587
 
 app.config['MAIL_USE_TLS'] = True
 
-app.config['MAIL_USERNAME'] = 'skillswap.admin123@gmail.com'
+app.config['MAIL_USERNAME'] = os.environ.get(
+    'MAIL_USERNAME'
+)
 
-app.config['MAIL_PASSWORD'] = 'vmfqlririkfqdohw'
+app.config['MAIL_PASSWORD'] = os.environ.get(
+    'MAIL_PASSWORD'
+)
 
 mail = Mail(app)
 # Database configuration
@@ -763,5 +769,4 @@ def handle_send_message(data):
 
 
 if __name__ == "__main__":
-    if __name__ == "__main__":
-     socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", port=5000)
