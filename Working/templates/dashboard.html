@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2>Welcome, {{ user.name }}</h2>
+        <p class="text-muted mb-0">
+            A community platform for skill exchange
+        </p>
+    </div>
+
+    <a href="/logout" class="btn btn-danger">
+        Logout
+    </a>
+</div>
+
+<div class="row">
+
+    <!-- Skills Section -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow border-0 h-100">
+            <div class="card-body">
+
+                <h4 class="mb-3">
+                    Your Skills
+                </h4>
+
+                <!-- Skill List -->
+                <ul class="list-group mb-4">
+
+                    {% if skills %}
+
+                        {% for skill in skills %}
+
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                                {{ skill.skill_name }}
+
+                                <span class="badge bg-warning text-dark">
+                                    Active
+                                </span>
+
+                            </li>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <li class="list-group-item text-muted">
+                            No skills added yet
+                        </li>
+
+                    {% endif %}
+
+                </ul>
+
+                <!-- Add Skill Form -->
+                <form method="POST" class="d-flex">
+
+                    <input
+                        class="form-control me-2"
+                        type="text"
+                        name="skill"
+                        placeholder="Add a new skill"
+                        required
+                    >
+
+                    <button class="btn btn-dark">
+                        Add
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Explore Section -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow border-0 h-100">
+            <div class="card-body">
+
+                <h4 class="mb-3">
+                    Find Skill Partners
+                </h4>
+
+                <p class="text-muted">
+                    Search users and connect with people who
+                    can help you learn new skills.
+                </p>
+
+
+
+                <p class="text-muted">
+
+                 Discover users, communities,
+                and collaborative learning opportunities.
+
+                </p>
+
+    <a
+    href="/search"
+    class="btn btn-warning w-100"
+    >
+
+    Explore Community
+
+        </a>
+
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+<!-- Features Overview -->
+<div class="row mt-2">
+
+    <div class="col-md-4 mb-3">
+
+        <div class="card shadow-sm border-0 text-center p-3">
+
+            <h5>Skill Matching</h5>
+
+            <p class="text-muted small">
+                Connect with users based on shared learning interests.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4 mb-3">
+
+        <div class="card shadow-sm border-0 text-center p-3">
+
+            <h5>Collaboration</h5>
+
+            <p class="text-muted small">
+                Share meeting links and collaborate effectively.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4 mb-3">
+
+        <div class="card shadow-sm border-0 text-center p-3">
+
+            <h5>Feedback System</h5>
+
+            <p class="text-muted small">
+                Build trust through ratings and user feedback.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

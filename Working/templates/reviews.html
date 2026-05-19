@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">
+
+    Reviews for {{ user.name }}
+
+</h2>
+
+{% if reviews %}
+
+    <div class="row">
+
+        {% for review in reviews %}
+
+            {% set sender =
+                User.query.get(review.sender_id)
+            %}
+
+            <div class="col-md-6 mb-3">
+
+                <div class="card shadow border-0">
+
+                    <div class="card-body">
+
+                        <h5>
+
+                            {{ sender.name }}
+
+                        </h5>
+
+                        <p class="text-warning fw-bold">
+
+                            ⭐ {{ review.rating }}/5
+
+                        </p>
+
+                        <p class="text-muted">
+
+                            {{ review.feedback }}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% else %}
+
+    <div class="alert alert-info">
+
+        No reviews yet
+
+    </div>
+
+{% endif %}
+
+{% endblock %}

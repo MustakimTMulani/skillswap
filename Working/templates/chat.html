@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    Skill Exchange Chat
+</h2>
+
+<div class="card shadow border-0">
+
+    <!-- CHAT AREA -->
+
+    <div
+        class="card-body"
+        id="chat-box"
+        style="
+            height:500px;
+            overflow-y:auto;
+            background:#f8f9fa;
+        "
+    >
+
+        {% if messages %}
+
+            {% for msg in messages %}
+
+                {% set sender =
+                    User.query.get(msg.sender_id)
+                %}
+
+                <!-- OWN MESSAGE -->
+
+                {% if msg.sender_id == current_user.id %}
+
+                    <div class="d-flex justify-content-end mb-3">
+
+                        <div
+                            class="p-3 rounded shadow-sm"
+                            style="
+                                max-width:70%;
+                                background:#212529;
+                                color:white;
+                            "
+                        >
+
+                            <small class="fw-bold">
+
+                                You
+
+                            </small>
+
+                            <p class="mb-1 mt-1">
+
+                                {{ msg.text }}
+
+                            </p>
+
+                            <small
+                                style="
+                                    font-size:11px;
+                                    opacity:0.8;
+                                "
+                            >
+
+                                {{ msg.timestamp.strftime('%d %b %I:%M %p') }}
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                <!-- OTHER USER MESSAGE -->
+
+                {% else %}
+
+                    <div class="d-flex justify-content-start mb-3">
+
+                        <div
+                            class="bg-white p-3 rounded shadow-sm"
+                            style="
+                                max-width:70%;
+                            "
+                        >
+
+                            <small class="fw-bold text-dark">
+
+                                {{ sender.name }}
+
+                            </small>
+
+                            <p class="mb-1 mt-1">
+
+                                {{ msg.text }}
+
+                            </p>
+
+                            <small class="text-muted">
+
+                                {{ msg.timestamp.strftime('%d %b %I:%M %p') }}
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="text-center text-muted mt-5">
+
+                <h5>
+                    No messages yet
+                </h5>
+
+                <p>
+                    Start the conversation
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- INPUT AREA -->
+
+    <div class="card-footer bg-white">
+
+        <form id="chat-form" class="d-flex">
+
+            <input
+                type="text"
+                name="message"
+                id="message-input"
+                class="form-control me-2"
+                placeholder="Type message or meeting link..."
+                required
+            >
+
+            <button class="btn btn-dark px-4">
+
+                Send
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- SOCKET.IO -->
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+<script>
+
+    const socket = io();
+
+    const form =
+        document.getElementById("chat-form");
+
+    const input =
+        document.getElementById("message-input");
+
+    const chatBox =
+        document.getElementById("chat-box");
+
+    // SEND MESSAGE
+
+    form.addEventListener("submit", function(e) {
+
+        e.preventDefault();
+
+        if (input.value.trim() === "") return;
+
+        socket.emit("send_message", {
+
+            username: "{{ current_user.name }}",
+
+            message: input.value,
+
+            sender_id: {{ current_user.id }},
+
+            request_id: {{ request_item.id }}
+
+        });
+
+        input.value = "";
+
+    });
+
+    // RECEIVE MESSAGE
+
+    socket.on("receive_message", function(data) {
+
+        const messageDiv =
+            document.createElement("div");
+
+        // OWN MESSAGE
+
+        if (data.sender_id == {{ current_user.id }}) {
+
+            messageDiv.innerHTML = `
+
+                <div class="d-flex justify-content-end mb-3">
+
+                    <div
+                        class="p-3 rounded shadow-sm"
+                        style="
+                            max-width:70%;
+                            background:#212529;
+                            color:white;
+                        "
+                    >
+
+                        <small class="fw-bold">
+
+                            You
+
+                        </small>
+
+                        <p class="mb-0 mt-1">
+
+                            ${data.message}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+        // OTHER USER MESSAGE
+
+        else {
+
+            messageDiv.innerHTML = `
+
+                <div class="d-flex justify-content-start mb-3">
+
+                    <div
+                        class="bg-white p-3 rounded shadow-sm"
+                        style="
+                            max-width:70%;
+                        "
+                    >
+
+                        <small class="fw-bold text-dark">
+
+                            ${data.username}
+
+                        </small>
+
+                        <p class="mb-0 mt-1">
+
+                            ${data.message}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+        chatBox.appendChild(messageDiv);
+
+        // AUTO SCROLL
+
+        chatBox.scrollTop =
+            chatBox.scrollHeight;
+
+    });
+
+</script>
+
+{% endblock %}

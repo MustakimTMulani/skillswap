@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    Ongoing Chats
+</h2>
+
+<div class="row">
+
+{% if chats %}
+
+    {% for chat in chats %}
+
+        {% if chat.sender_id == current_user.id %}
+
+            {% set other_user = User.query.get(chat.receiver_id) %}
+
+        {% else %}
+
+            {% set other_user = User.query.get(chat.sender_id) %}
+
+        {% endif %}
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow border-0">
+
+                <div class="card-body">
+
+                    <h5>
+                        {{ other_user.name }}
+                    </h5>
+
+                    <p class="text-muted">
+                        Active Skill Collaboration
+                    </p>
+
+                    <div class="d-grid gap-2">
+
+    <a
+        href="/chat/{{ chat.id }}"
+        class="btn btn-dark"
+    >
+        Open Chat
+    </a>
+
+    {% if chat.sender_id == current_user.id %}
+
+        <a
+            href="/rate/{{ chat.receiver_id }}"
+            class="btn btn-warning"
+        >
+            Leave Review
+        </a>
+
+    {% else %}
+
+        <a
+            href="/rate/{{ chat.sender_id }}"
+            class="btn btn-warning"
+        >
+            Leave Review
+        </a>
+
+    {% endif %}
+
+</div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <div class="alert alert-info">
+
+        No active chats yet
+
+    </div>
+
+{% endif %}
+
+</div>
+
+{% endblock %}

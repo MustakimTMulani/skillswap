@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-md-8">
+
+        <div class="card shadow border-0">
+
+            <div class="card-body p-4">
+
+                <h2 class="mb-4">
+                    Edit Profile
+                </h2>
+
+                <form method="POST">
+
+                    <label class="mb-2">
+                        Name
+                    </label>
+
+                    <input
+                        type="text"
+                        name="name"
+                        class="form-control mb-3"
+                        value="{{ current_user.name }}"
+                        required
+                    >
+
+                    <label class="mb-2">
+                        Qualification
+                    </label>
+
+                    <input
+                        type="text"
+                        name="qualification"
+                        class="form-control mb-3"
+                        placeholder="BCA Student"
+                        value="{{ current_user.qualification or '' }}"
+                    >
+
+                    <label class="mb-2">
+                        About You
+                    </label>
+
+                    <textarea
+                        name="bio"
+                        class="form-control mb-3"
+                        rows="4"
+                        placeholder="Tell something about yourself..."
+                    >{{ current_user.bio or '' }}</textarea>
+
+                    <label class="mb-2">
+                        Contact Info
+                    </label>
+
+                    <input
+                        type="text"
+                        name="contact"
+                        class="form-control mb-4"
+                        placeholder="Phone / LinkedIn / Email"
+                        value="{{ current_user.contact or '' }}"
+                    >
+
+                    <button class="btn btn-dark w-100">
+
+                        Save Profile
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

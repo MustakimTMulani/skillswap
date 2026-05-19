@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <!-- PROFILE HEADER -->
+
+    <div class="card shadow border-0 mb-4">
+
+        <div class="card-body text-center p-5">
+
+            <h2>
+
+                {{ user.name }}
+
+            </h2>
+
+            {% if user.qualification %}
+
+                <p class="text-muted">
+
+                    🎓 {{ user.qualification }}
+
+                </p>
+
+            {% endif %}
+
+            {% if avg_rating %}
+
+                <h4 class="text-warning">
+
+                    ⭐ {{ avg_rating }}/5
+
+                </h4>
+
+            {% endif %}
+
+            {% if current_user.id == user.id %}
+
+                <a
+                    href="/edit_profile"
+                    class="btn btn-dark mt-3"
+                >
+                    Edit Profile
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- ABOUT -->
+
+    <div class="card shadow border-0 mb-4">
+
+        <div class="card-body">
+
+            <h4 class="mb-3">
+
+                About
+
+            </h4>
+
+            {% if user.bio %}
+
+                <p class="text-muted">
+
+                    {{ user.bio }}
+
+                </p>
+
+            {% else %}
+
+                <p class="text-muted">
+
+                    No bio added yet
+
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- CONTACT -->
+
+    <div class="card shadow border-0 mb-4">
+
+        <div class="card-body">
+
+            <h4 class="mb-3">
+
+                Contact Information
+
+            </h4>
+
+            {% if user.contact %}
+
+                <p>
+
+                    📞 {{ user.contact }}
+
+                </p>
+
+            {% else %}
+
+                <p class="text-muted">
+
+                    No contact info added
+
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- SKILLS -->
+
+    <div class="card shadow border-0 mb-4">
+
+        <div class="card-body">
+
+            <h4 class="mb-3">
+
+                Skills
+
+            </h4>
+
+            {% if skills %}
+
+                <div class="d-flex flex-wrap gap-2">
+
+                    {% for skill in skills %}
+
+                        <span class="badge bg-dark p-2">
+
+                            {{ skill.skill_name }}
+
+                        </span>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <p class="text-muted">
+
+                    No skills added
+
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- REVIEWS -->
+
+    <div class="card shadow border-0">
+
+        <div class="card-body">
+
+            <h4 class="mb-4">
+
+                Community Reviews
+
+            </h4>
+
+            {% if reviews %}
+
+                {% for review in reviews %}
+
+                    {% set reviewer =
+                        User.query.get(review.sender_id)
+                    %}
+
+                    <div class="border rounded p-3 mb-3">
+
+                        <div class="d-flex justify-content-between">
+
+                            <strong>
+
+                                {{ reviewer.name }}
+
+                            </strong>
+
+                            <span class="text-warning">
+
+                                ⭐ {{ review.rating }}/5
+
+                            </span>
+
+                        </div>
+
+                        <p class="text-muted mt-2 mb-0">
+
+                            {{ review.feedback }}
+
+                        </p>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p class="text-muted">
+
+                    No reviews yet
+
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-md-4">
+
+        <div class="card shadow p-4">
+
+            <h3 class="text-center mb-3">
+                Register
+            </h3>
+
+            <form method="POST">
+
+                <input
+                    class="form-control mb-2"
+                    type="text"
+                    name="name"
+                    placeholder="Name"
+                    required
+                >
+
+                <input
+                    class="form-control mb-2"
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    required
+                >
+
+                <!-- PASSWORD -->
+
+                <div class="input-group mb-2">
+
+                    <input
+                        class="form-control"
+                        type="password"
+                        name="password"
+                        id="registerPassword"
+                        placeholder="Password"
+                        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$"
+                        title="Password must contain uppercase, lowercase, number, special character and be at least 8 characters long"
+                        required
+                    >
+
+                    <button
+                        class="btn btn-outline-secondary"
+                        type="button"
+                        onclick="toggleRegisterPassword()"
+                    >
+                        Show
+                    </button>
+
+                </div>
+
+                <!-- PASSWORD RULE -->
+
+                <div class="form-text mb-3">
+
+                    Password must contain:
+                    8+ characters,
+                    uppercase,
+                    lowercase,
+                    number,
+                    and special character.
+
+                </div>
+
+                <button class="btn btn-warning w-100">
+
+                    Register
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- SCRIPT -->
+
+<script>
+
+function toggleRegisterPassword() {
+
+    const passwordInput =
+        document.getElementById("registerPassword");
+
+    if (passwordInput.type === "password") {
+
+        passwordInput.type = "text";
+
+    } else {
+
+        passwordInput.type = "password";
+
+    }
+}
+
+</script>
+
+{% endblock %}

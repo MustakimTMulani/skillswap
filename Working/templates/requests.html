@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">Skill Exchange Requests</h2>
+
+<!-- RECEIVED REQUESTS -->
+
+<h4 class="mb-3">Received Requests</h4>
+
+<div class="row mb-5">
+
+{% if received_requests %}
+
+    {% for request in received_requests %}
+
+        {% set sender = User.query.get(request.sender_id) %}
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow border-0">
+
+                <div class="card-body">
+
+                    <h5>
+                        {{ sender.name }}
+                    </h5>
+
+                    <p class="text-muted">
+                        Wants to connect with you
+                    </p>
+
+                    {% if request.status == "Pending" %}
+
+                        <div class="d-flex gap-2">
+
+                            <a
+                                href="/accept_request/{{ request.id }}"
+                                class="btn btn-success w-50"
+                            >
+                                Accept
+                            </a>
+
+                            <a
+                                href="/reject_request/{{ request.id }}"
+                                class="btn btn-danger w-50"
+                            >
+                                Reject
+                            </a>
+
+                        </div>
+
+                    {% elif request.status == "Accepted" %}
+
+                        <div class="d-grid gap-2">
+
+                            <span class="badge bg-success">
+                                Accepted
+                            </span>
+
+                            <a
+                                href="/chat/{{ request.id }}"
+                                class="btn btn-dark"
+                            >
+                                Open Chat
+                            </a>
+
+                        </div>
+
+                    {% else %}
+
+                        <span class="badge bg-danger">
+                            Rejected
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <p class="text-muted">
+        No received requests
+    </p>
+
+{% endif %}
+
+</div>
+
+<!-- SENT REQUESTS -->
+
+<h4 class="mb-3">Sent Requests</h4>
+
+<div class="row">
+
+{% if sent_requests %}
+
+    {% for request in sent_requests %}
+
+        {% set receiver = User.query.get(request.receiver_id) %}
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow border-0">
+
+                <div class="card-body">
+
+                    <h5>
+                        {{ receiver.name }}
+                    </h5>
+
+                    <p class="text-muted">
+                        Request Status
+                    </p>
+
+                    {% if request.status == "Accepted" %}
+
+                        <div class="d-grid gap-2">
+
+                            <span class="badge bg-success">
+                                Accepted
+                            </span>
+
+                            <a
+                                href="/chat/{{ request.id }}"
+                                class="btn btn-dark"
+                            >
+                                Open Chat
+                            </a>
+
+                        </div>
+
+                    {% elif request.status == "Rejected" %}
+
+                        <span class="badge bg-danger">
+                            Rejected
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-warning text-dark">
+                            Pending
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <p class="text-muted">
+        No sent requests
+    </p>
+
+{% endif %}
+
+</div>
+
+{% endblock %}
