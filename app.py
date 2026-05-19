@@ -21,6 +21,7 @@ from flask_login import (
 print("NEW VERSION DEPLOYED")
 
 app = Flask(__name__)
+app.secret_key = "skillswapsecret"
 socketio = SocketIO(app)
 
 # Database configuration
