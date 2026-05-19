@@ -10,8 +10,6 @@ from flask import (
 )
 from models import db, User, Skill, Request, Message, Rating
 from flask_socketio import SocketIO, emit
-from flask_mail import Mail, Message as MailMessage
-import random
 
 from flask_login import (
     LoginManager,
@@ -25,24 +23,6 @@ print("NEW VERSION DEPLOYED")
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-app.secret_key = "skillswapsecret"
-# EMAIL CONFIGURATION
-
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-
-app.config['MAIL_PORT'] = 587
-
-app.config['MAIL_USE_TLS'] = True
-
-app.config['MAIL_USERNAME'] = os.environ.get(
-    'MAIL_USERNAME'
-)
-
-app.config['MAIL_PASSWORD'] = os.environ.get(
-    'MAIL_PASSWORD'
-)
-
-mail = Mail(app)
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -434,8 +414,6 @@ def reviews(user_id):
 
 
 # Register
-# REGISTER WITH OTP
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 
@@ -459,242 +437,27 @@ def register():
 
             return redirect('/register')
 
-        # GENERATE OTP
+        # CREATE USER DIRECTLY
 
-        otp = str(random.randint(100000, 999999))
+        new_user = User(
 
-        # STORE TEMP DATA
+            name=name,
 
-        session['temp_name'] = name
+            email=email,
 
-        session['temp_email'] = email
-
-        session['temp_password'] = password
-
-        session['otp'] = otp
-
-        # SEND OTP EMAIL
-
-        msg = MailMessage(
-
-            subject="SkillSwap OTP Verification",
-
-            sender=app.config['MAIL_USERNAME'],
-
-            recipients=[email]
+            password=password
 
         )
 
-        msg.body = f"""
-
-Hello {name},
-
-Your SkillSwap OTP is:
-
-{otp}
-
-This OTP is used for email verification.
-
-- SkillSwap Team
-"""
-
-        #mail.send(msg)
-
-        flash("OTP sent to your email")
-
-        return redirect('/verify_otp')
-
-    return render_template("register.html")
-
-#OTP Route
-# VERIFY OTP
-
-@app.route('/verify_otp', methods=['GET', 'POST'])
-def verify_otp():
-
-    if request.method == 'POST':
-
-        entered_otp = request.form['otp']
-
-        # CHECK OTP
-
-        if entered_otp == session.get('otp'):
-
-            # CREATE USER
-
-            new_user = User(
-
-                name=session.get('temp_name'),
-
-                email=session.get('temp_email'),
-
-                password=session.get('temp_password')
-
-            )
-
-            db.session.add(new_user)
-
-            db.session.commit()
-
-            # SEND WELCOME EMAIL
-
-            msg = MailMessage(
-
-                subject="Welcome to SkillSwap!",
-
-                sender=app.config['MAIL_USERNAME'],
-
-                recipients=[session.get('temp_email')]
-
-            )
-
-            msg.body = f"""
-
-Hello {session.get('temp_name')},
-
-Welcome to SkillSwap!
-
-Your account has been verified successfully.
-
-- SkillSwap Team
-"""
-
-            #mail.send(msg)
-
-            # CLEAR SESSION
-
-            session.pop('otp', None)
-
-            session.pop('temp_name', None)
-
-            session.pop('temp_email', None)
-
-            session.pop('temp_password', None)
-
-            flash("Registration successful")
-
-            return redirect('/login')
-
-        else:
-
-            flash("Invalid OTP")
-
-    return render_template("verify_otp.html")
-
-
-# FORGOT PASSWORD
-
-@app.route('/forgot_password', methods=['GET', 'POST'])
-def forgot_password():
-
-    if request.method == 'POST':
-
-        email = request.form['email']
-
-        user = User.query.filter_by(
-            email=email
-        ).first()
-
-        if not user:
-
-            flash("Email not found")
-
-            return redirect('/forgot_password')
-
-        # GENERATE OTP
-
-        otp = str(random.randint(100000, 999999))
-
-        # STORE IN SESSION
-
-        session['reset_email'] = email
-
-        session['reset_otp'] = otp
-
-        # SEND EMAIL
-
-        msg = MailMessage(
-
-            subject="SkillSwap Password Reset OTP",
-
-            sender=app.config['MAIL_USERNAME'],
-
-            recipients=[email]
-
-        )
-
-        msg.body = f"""
-
-Hello,
-
-Your OTP for password reset is:
-
-{otp}
-
-- SkillSwap Team
-"""
-
-        #mail.send(msg)
-
-        flash("OTP sent to your email")
-
-        return redirect('/verify_reset_otp')
-
-    return render_template(
-        "forgot_password.html"
-    )
-
-# VERIFY RESET OTP
-
-@app.route('/verify_reset_otp', methods=['GET', 'POST'])
-def verify_reset_otp():
-
-    if request.method == 'POST':
-
-        entered_otp = request.form['otp']
-
-        if entered_otp == session.get('reset_otp'):
-
-            return redirect('/reset_password')
-
-        else:
-
-            flash("Invalid OTP")
-
-    return render_template(
-        "verify_reset_otp.html"
-    )
-
-# RESET PASSWORD
-
-@app.route('/reset_password', methods=['GET', 'POST'])
-def reset_password():
-
-    if request.method == 'POST':
-
-        new_password = request.form['password']
-
-        user = User.query.filter_by(
-            email=session.get('reset_email')
-        ).first()
-
-        user.password = new_password
+        db.session.add(new_user)
 
         db.session.commit()
 
-        # CLEAR SESSION
-
-        session.pop('reset_email', None)
-
-        session.pop('reset_otp', None)
-
-        flash("Password updated successfully")
+        flash("Registration successful")
 
         return redirect('/login')
 
-    return render_template(
-        "reset_password.html"
-    )
+    return render_template("register.html")
 
 # Login
 @app.route('/login', methods=['GET', 'POST'])
