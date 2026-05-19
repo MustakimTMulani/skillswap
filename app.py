@@ -20,6 +20,7 @@ from flask_login import (
     login_required,
     current_user
 )
+print("NEW VERSION DEPLOYED")
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -319,7 +320,7 @@ Login now to continue learning together.
 - SkillSwap Team
 """
 
-    mail.send(msg)
+    #mail.send(msg)
 
     flash("Request accepted")
 
@@ -497,7 +498,7 @@ This OTP is used for email verification.
 - SkillSwap Team
 """
 
-        mail.send(msg)
+        #mail.send(msg)
 
         flash("OTP sent to your email")
 
@@ -558,7 +559,7 @@ Your account has been verified successfully.
 - SkillSwap Team
 """
 
-            mail.send(msg)
+            #mail.send(msg)
 
             # CLEAR SESSION
 
@@ -633,7 +634,7 @@ Your OTP for password reset is:
 - SkillSwap Team
 """
 
-        mail.send(msg)
+        #mail.send(msg)
 
         flash("OTP sent to your email")
 
